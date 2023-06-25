@@ -1,19 +1,21 @@
 const express = require("express");
 const User = require("../model/listSchema");
-const {jwtVerification,auth} = require("../middelware/middelware")
+const {jwtVerification,auth} = require("../middelware/middelware");
+
+const{v4}=require("uuid")
  
 const  router = express.Router();
  router.post("/add",jwtVerification,auth(["staff","manager"]),async(req,res)=>{
     let payload = req.body;
-   let listofdata =  await User.find()
-   payload.id = listofdata.length+100
+   // let listofdata =  await User.find()
+   payload.id =v4();
    console.log(payload.email)
-    let already_user = await User.findOne({email:payload.email});
+    let already_user = await User.findOne({id:payload.id});
     if(!already_user){
      let newOne = new User(payload);
        newOne.save().then((data)=>{
         console.log(data);
-        res.status(201).json({"responce":1,message:"User added Successfuly"})
+        res.status(201).json({"responce":1,message:"Product added Successfuly"})
        })
     }else{
          res.status(400).json("User already Exist !")
